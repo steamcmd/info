@@ -1,0 +1,49 @@
+services:
+  web:
+    build: .
+    #command: "gunicorn main:app --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --reload"
+    command: sleep 999999
+    volumes:
+      - ./src:/data
+    environment:
+      STORAGE_TYPE: object
+      STORAGE_OBJECT_ENDPOINT: store:9000
+      STORAGE_OBJECT_ACCESS_KEY: steamcmd
+      STORAGE_OBJECT_SECRET_KEY: steamcmd
+      STORAGE_OBJECT_BUCKET: steamcmd
+      REDIS_HOST: broker
+      REDIS_PORT: 6379
+      LOG_LEVEL: info
+      PYTHONUNBUFFERED: TRUE
+    restart: always
+
+  broker:
+    image: redis:7.4
+    ports:
+      - "6379:6379"
+
+  store:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: steamcmd
+      MINIO_ROOT_PASSWORD: steamcmd
+
+  setup:
+    image: minio/mc
+    depends_on:
+      - store
+    environment:
+      MINIO_ROOT_USER: steamcmd
+      MINIO_ROOT_PASSWORD: steamcmd
+      MINIO_BUCKET_NAME: steamcmd
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add store http://store:9000 steamcmd steamcmd;
+      /usr/bin/mc mb --ignore-existing store/steamcmd;
+      /usr/bin/mc anonymous set public store/steamcmd;
+      exit 0;
+      "
