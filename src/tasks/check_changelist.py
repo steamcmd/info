@@ -4,9 +4,7 @@ from .get_package_info import get_package_info_task
 import utils.steam
 import utils.redis
 import config
-import logging
 import json
-import os
 
 
 @app.task(name="check_changelist")
@@ -20,16 +18,25 @@ def check_changelist_task():
     latest_change_number = utils.steam.get_change_number()
 
     if not previous_change_number:
+        logger.warning("Previous changenumber could not be retrieved from Redis")
         current_state = utils.storage.read("state/", "changes.json")
         if current_state:
             content = json.loads(current_state)
             previous_change_number = content["change_number"]
+        else:
+            logger.warning(
+                "Previous changenumber could not be retrieved from statefile in storage"
+            )
 
     if not previous_change_number:
         utils.redis.write("change_number", latest_change_number)
 
     elif int(previous_change_number) == int(latest_change_number):
-        logging.info("The previous and current change number " + latest_change_number + " is the same")
+        logger.info(
+            "The previous and current change number "
+            + latest_change_number
+            + " are the same"
+        )
         pass
 
     else:
@@ -51,4 +58,4 @@ def check_changelist_task():
             "change_number": latest_change_number,
         }
         content = json.dumps(content)
-        write = utils.storage.write(content, "state/", "changes.json")
+        utils.storage.write(content, "state/", "changes.json")

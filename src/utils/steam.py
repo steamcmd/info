@@ -1,8 +1,6 @@
-from main import app, logger
+from main import logger
 from steam.client import SteamClient
 import requests
-import logging
-import os
 
 
 def init_client():

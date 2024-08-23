@@ -1,5 +1,4 @@
-from main import app, logger
-import logging
+from main import logger
 import sys
 import os
 
@@ -28,8 +27,8 @@ def read_env(name, default=False, dependency={}, choices=[]):
 
     try:
         value = os.environ[name]
-        if choices and not value in choices:
-            logging.critical(
+        if choices and value not in choices:
+            logger.critical(
                 "The value '"
                 + str(value)
                 + "' of variable '"
@@ -39,7 +38,7 @@ def read_env(name, default=False, dependency={}, choices=[]):
             )
             sys.exit(1)
 
-    except KeyError as err:
+    except KeyError:
         if default:
             value = default
         else:
@@ -47,7 +46,7 @@ def read_env(name, default=False, dependency={}, choices=[]):
 
         for dep in dependency:
             if read_env(dep) == dependency[dep]:
-                logging.critical(
+                logger.critical(
                     "The variable '"
                     + str(name)
                     + "' must be set because it is required when '"

@@ -1,14 +1,13 @@
-from main import app, logger
+from main import logger
 import utils.helper
 import config
-import logging
-import sys
 import os
 from minio import Minio
 from io import BytesIO
 
 
 ## meta functions
+
 
 def read(path, filename):
     """
@@ -62,6 +61,7 @@ def list(path):
 
 ## local storage functions
 
+
 def local_read(path, filename):
     """
     Read file from local specified directory.
@@ -76,7 +76,7 @@ def local_read(path, filename):
         content = content.read()
 
     except Exception:
-        logging.error("The following file could not be read: " + file)
+        logger.error("The following file could not be read: " + file)
         return False
 
     return content
@@ -96,10 +96,10 @@ def local_write(content, path, filename):
         f = open(file, "w")
         f.write(content)
         f.close()
-        logging.info("Written the following file: " + file)
+        logger.info("Written the following file: " + file)
 
     except Exception:
-        logging.error("The following file could not be written locally: " + file)
+        logger.error("The following file could not be written locally: " + file)
         return False
 
     return True
@@ -117,7 +117,12 @@ def local_delete(path, filename):
     try:
         os.remove(file)
     except OSError as err:
-        logging.error("The following file could not be deleted locally: " + err.filename + ". The following error occured: " + err.strerror)
+        logger.error(
+            "The following file could not be deleted locally: "
+            + err.filename
+            + ". The following error occured: "
+            + err.strerror
+        )
         return False
 
     return True
@@ -136,13 +141,14 @@ def local_list(path):
         content = os.listdir(path)
 
     except Exception:
-        logging.error("The following directory could not be read: " + path)
+        logger.error("The following directory could not be read: " + path)
         return False
 
     return content
 
 
 ## object store functions
+
 
 def object_connect():
     """
@@ -154,7 +160,7 @@ def object_connect():
         "endpoint": config.storage_object_endpoint,
         "access_key": config.storage_object_access_key,
         "secret_key": config.storage_object_secret_key,
-        "secure": str(config.storage_object_secure).lower() == "true"
+        "secure": str(config.storage_object_secure).lower() == "true",
     }
 
     if config.storage_object_region:
@@ -178,7 +184,7 @@ def object_read(path, filename):
         content = conn.get_object(config.storage_object_bucket, file)
 
     except Exception:
-        logging.error("The following file could not be retrieved: " + file)
+        logger.error("The following file could not be retrieved: " + file)
         return False
 
     return content
@@ -190,13 +196,20 @@ def object_write(content, path, filename):
     specified directory.
     """
 
-    content = content.encode('utf-8')
+    content = content.encode("utf-8")
     content = BytesIO(content)
 
     file = path + filename
     conn = object_connect()
-    resp = conn.put_object(config.storage_object_bucket, file, content, length=-1, part_size=10*1024*1024, content_type="application/json")
-    
+    resp = conn.put_object(
+        config.storage_object_bucket,
+        file,
+        content,
+        length=-1,
+        part_size=10 * 1024 * 1024,
+        content_type="application/json",
+    )
+
     return resp
 
 
@@ -218,7 +231,6 @@ def object_list(path, details=False):
     storage and return it as a list.
     """
 
-    max_keys = 999999
     conn = object_connect()
 
     try:
@@ -231,7 +243,7 @@ def object_list(path, details=False):
             file_list.append(file)
 
     except Exception:
-        logging.error("The files in following directory could not be listed: " + path)
+        logger.error("The files in following directory could not be listed: " + path)
         return False
 
     return file_list

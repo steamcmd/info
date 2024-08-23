@@ -1,8 +1,6 @@
-from main import app, logger
+from main import logger
 import config
 import redis
-import logging
-import os
 
 
 def connect():
@@ -14,7 +12,7 @@ def connect():
         rds = redis.Redis(host=config.redis_host, port=config.redis_port)
 
     except Exception as error:
-        logging.error("Failed to connect to Redis with error: " + error)
+        logger.error("Failed to connect to Redis with error: " + error)
         return False
 
     return rds

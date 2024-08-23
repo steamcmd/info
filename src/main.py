@@ -1,7 +1,5 @@
 from celery import Celery
-from celery.schedules import crontab
 import logging
-import os
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
