@@ -60,12 +60,14 @@ def get_changes_since_change_number(change_number):
     )
 
     app_list = []
-    for app in info.app_changes:
-        app_list.append(app.appid)
+    if info.app_changes:
+        for app in info.app_changes:
+            app_list.append(app.appid)
 
     package_list = []
-    for package in info.package_changes:
-        package_list.append(package.packageid)
+    if info.package_changes:
+        for package in info.package_changes:
+            package_list.append(package.packageid)
 
     changes = {"apps": app_list, "packages": package_list}
 

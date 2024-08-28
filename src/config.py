@@ -30,7 +30,11 @@ beat_schedule = {
     },
     "check-missing-apps-every-30-minutes": {
         "task": "check_missing_apps",
-        "schedule": 10.0,
+        "schedule": 1800.0,
+    },
+    "check-deadlocks-every-1-hour": {
+        "task": "check_deadlocks",
+        "schedule": 3600.0,
     },
 }
 

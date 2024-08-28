@@ -1,11 +1,12 @@
 from main import app, logger
+from celery_singleton import Singleton
 from .get_app_info import get_app_info_task
 import utils.storage
 import utils.steam
 import config
 
 
-@app.task(name="check_missing_apps")
+@app.task(name="check_missing_apps", base=Singleton, lock_expiry=7200)
 def check_missing_apps_task():
     """
     Check for missing stored apps by comparing them with

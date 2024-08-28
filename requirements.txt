@@ -1,5 +1,7 @@
 steam[client]
 celery
+celery-singleton
 logfmter
 redis
 minio
+flower

@@ -206,7 +206,8 @@ def object_write(content, path, filename):
         file,
         content,
         length=-1,
-        part_size=10 * 1024 * 1024,
+        #part_size=10 * 1024 * 1024,
+        part_size=10485760,
         content_type="application/json",
     )
 

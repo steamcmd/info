@@ -1,4 +1,5 @@
 from main import app, logger
+from celery_singleton import Singleton
 from .get_app_info import get_app_info_task
 from .get_package_info import get_package_info_task
 import utils.steam
@@ -7,7 +8,7 @@ import config
 import json
 
 
-@app.task(name="check_changelist")
+@app.task(name="check_changelist", base=Singleton, lock_expiry=10)
 def check_changelist_task():
     """
     Check for app and package changes between changelists
@@ -34,7 +35,7 @@ def check_changelist_task():
     elif int(previous_change_number) == int(latest_change_number):
         logger.info(
             "The previous and current change number "
-            + latest_change_number
+            + str(latest_change_number)
             + " are the same"
         )
         pass
@@ -58,4 +59,4 @@ def check_changelist_task():
             "change_number": latest_change_number,
         }
         content = json.dumps(content)
-        utils.storage.write(content, "state/", "changes.json")
+        output = utils.storage.write(content, "state/", "changes.json")
