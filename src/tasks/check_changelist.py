@@ -59,4 +59,4 @@ def check_changelist_task():
             "change_number": latest_change_number,
         }
         content = json.dumps(content)
-        output = utils.storage.write(content, "state/", "changes.json")
+        utils.storage.write(content, "state/", "changes.json")

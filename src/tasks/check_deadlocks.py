@@ -9,7 +9,6 @@ def check_deadlocks_task(self):
     in Redis to avoid for ever deadlocks.
     """
 
-    #active_tasks = app.tasks.keys()
     workers = app.control.inspect()
     workers = workers.active()
 
@@ -23,13 +22,3 @@ def check_deadlocks_task(self):
     clear_locks(app)
 
     logger.info("Cleared locks. No tasks were running.")
-
-    #print(len(total_tasks))
-    #print(total_tasks)
-
-    #print(active_tasks)
-
-
-
-
-    #{'celery@jona-macbook.localdomain': [{'id': '40e33378-cdcf-4008-a927-064c6fd26b0e', 'name': 'check_deadlocks', 'args': [], 'kwargs': {}, 'type': 'check_deadlocks', 'hostname': 'celery@jona-macbook.localdomain', 'time_start': 1724623549.8536904, 'acknowledged': True, 'delivery_info': {'exchange': '', 'routing_key': 'celery', 'priority': 0, 'redelivered': False}, 'worker_pid': 61992}]}
