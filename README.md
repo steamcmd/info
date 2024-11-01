@@ -1,9 +1,12 @@
+> ***This is a rewrite of [github.com/steamcmd/api](https://github.com/steamcmd/api)***
+> ***and currently a work in progress (and therefor not in production yet)***
+
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 # SteamCMD Info API
 
 Code and deployment configuration for the new info API.
-The API is reachable on https://info.steamcmd.net.
+The API will be reachable on https://info.steamcmd.net.
 
 ## Development
 
